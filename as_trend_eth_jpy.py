@@ -79,6 +79,10 @@ def GetBB(data_now,flag_just_time,element):
       element["data_bb"] = CalcBB(element["data_bb_20"]) # BBを計算
       print(data_now)
       print(element)
+      with open("data_now.csv",mode="a") as f:
+        print(data_now,file=f)
+      with open("element.csv",mode="a") as f:
+        print(element,file=f)
       element["data_bb_20"] = element["data_bb_20"][1:] # 1番古いデータを削除
     element["flag_bb_20"] = 1 # 指定時間のデータが取得できたら1(59~1の幅でデータを取るのを終了)
   else:
