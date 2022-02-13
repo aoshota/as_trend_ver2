@@ -202,7 +202,7 @@ while True:
 	# BBのデータ集めとBBの計算の後にエントリー・決済処理
   element = GetBB(data_now,flag_just_time,element)
 
-  if element["data_bb"]: # BBのデータがあったらエントリー・決済条件を検査する
+  if element["data_bb"] and element["flag_bb_20"]: # BBのデータがあったらエントリー・決済条件を検査する
     if element["flag_position"] == "NO": # flag_positionがNOのときはエントリー条件検査とエントリー処理
       element = CheckAndEntry(data_now,element)
     else:# flag_positionがBUY・SELLのときは決済条件検査と決済処理
