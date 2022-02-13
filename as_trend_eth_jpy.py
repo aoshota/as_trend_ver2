@@ -69,13 +69,13 @@ def CalcBB(data):
 # 現在のBBを計算する関数
 def GetBB(flag_just_time,element):
   if flag_just_time: # 指定した時間のデータの時
+    with open("kline.csv", mode="a") as f:
+      print(data_now,file=f)
     if len(element["data_bb_20"]) < 19: # 最初の19個が揃うまでの処理
       element["data_bb_20"].append(int(data_now["last"]))
     else:
       element["data_bb_20"].append(int(data_now["last"])) # 20個目のデータを追加
       element["data_bb"] = CalcBB(element["data_bb_20"]) # BBを計算
-      print(data_now["timestamp"],end=" ")
-      print(element["data_bb_20"])
       element["data_bb_20"] = element["data_bb_20"][1:] # 1番古いデータを削除
     element["flag_bb_20"] = 1 # 指定時間のデータが取得できたら1(59~1の幅でデータを取るのを終了)
   else:
