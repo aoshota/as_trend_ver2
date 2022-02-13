@@ -22,7 +22,7 @@ with open(pathContent) as f:
 discord = Discord(url=content["discordUrl"]) # discordインスタンスを作成
 
 # パラメータ
-candle_stick_time = 1 # ローソク足の時間(分)
+candle_stick_time = 10 # ローソク足の時間(分)
 
 # 最新のレートをAPIで取得する関数
 # レスポンスがjsonではないとき、0を返す
