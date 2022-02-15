@@ -8,7 +8,7 @@ import re
 
 # 仕様
 # ±σ1を3回連続で超えたらエントリー（指値注文）
-# ±σ1を1回超えたら決済（指値注文）
+# sma5を1回超えたら決済（指値注文）
 # SMA20を超えたら損切り（成行注文）
 # 指値注文は板情報から金額を設定する
 # ローソク足は10分足を使用
@@ -22,7 +22,7 @@ with open(pathContent) as f:
 discord = Discord(url=content["discordUrl"]) # discordインスタンスを作成
 
 # パラメータ
-candle_stick_time = 10 # ローソク足の時間(分)
+candle_stick_time = 1 # ローソク足の時間(分)
 
 # 最新のレートをAPIで取得する関数
 # レスポンスがjsonではないとき、0を返す
@@ -166,17 +166,17 @@ def CheckAndEntry(data_now,element):
 
 # 決済条件を検査して決済する関数
 def CheckAndSettlement(data_now,element):
-  # ロングポジションを入れている時、現在のレートが+1σより小さかったら決済、移動平均(SMA20)より小さかったら損切り(成行注文)
+  # ロングポジションを入れている時、現在のレートがsma5より小さかったら決済、移動平均(SMA20)より小さかったら損切り(成行注文)
   if element["flag_position"] == "BUY":
-    if int(data_now["last"]) <= element["data_bb"]["upper"]:
+    if int(data_now["last"]) <= element["sma5"]:
       element = Settlement(data_now,element)
       element["flag_position"] = "NO"
     if int(data_now["last"]) <= element["data_bb"]["mean"]:
       element = StopLoss(element)
       element["flag_position"] = "NO"
-  # ショートポジションを入れている時、現在のレートが-1σより大きかったら決済、移動平均(SMA20)より大きかったら損切り(成行注文)
+  # ショートポジションを入れている時、現在のレートがsma5より大きかったら決済、移動平均(SMA20)より大きかったら損切り(成行注文)
   elif element["flag_position"] == "SELL":
-    if int(data_now["last"]) >= element["data_bb"]["lower"]:
+    if int(data_now["last"]) >= element["sma5"]:
       element = Settlement(data_now,element)
       element["flag_position"] = "NO"
     if int(data_now["last"]) >= element["data_bb"]["mean"]:
@@ -193,6 +193,7 @@ element = {
 	"flag_plus" : 0, # レートがσを連続で上回った回数
 	"flag_position" : "NO", # 現在のポジション(NO:ポジションなし、BUY:ロング、SELL:ショート)
 	"flag_bb_20" : 0, # 指定時間のデータが取得できたら1、取得できていないときは0
+  "sma5" : 0,
   "demo" : {"money" : 0, "money_tmp" : 0} # デモ用の所持金を計算するための変数
 }
 
@@ -210,6 +211,7 @@ while True:
     if element["flag_position"] == "NO": # flag_positionがNOのときはエントリー条件検査とエントリー処理
       element = CheckAndEntry(data_now,element)
     else:# flag_positionがBUY・SELLのときは決済条件検査と決済処理
+      element["sma5"] = CalcBB(element["data_bb_20"][15:])["mean"] # 決済で使うsma5を代入
       element = CheckAndSettlement(data_now,element)
 
   # 59~01秒のデータ幅があるため、どれか1つ取得できたら他のデータを取得しないように5秒遅延させる
