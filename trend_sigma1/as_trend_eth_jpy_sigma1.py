@@ -14,7 +14,7 @@ import re
 # ローソク足は10分足を使用
 
 # 定数
-# APIキーなどの不変な変数をcontentに格納
+# APIキーなどの定数をcontentに格納
 # content=["lineToken":"","apiKey","","secretKey":"","discordUrl":"","endPointPublic":"","pathGetRate":""]
 pathContent = "content.json"
 with open(pathContent) as f:
