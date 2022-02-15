@@ -2,3 +2,4 @@ content.json
 tmp.py
 test/
 *.csv
+data/
