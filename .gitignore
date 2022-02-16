@@ -3,3 +3,4 @@ tmp.py
 test/
 *.csv
 data/
+.DS_Store
